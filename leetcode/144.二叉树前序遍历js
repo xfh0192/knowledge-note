@@ -1,0 +1,28 @@
+// 递归
+var preorderTraversal = function (root, arr = []) {
+    if (root) {
+        arr.push(root.value)
+        preorderTraversal(root.left, arr)
+        preorderTraversal(root.right, arr)
+    }
+    return arr
+}
+
+// ====
+
+// 迭代
+var preorderTraversal = function (root) {
+    let result = []
+    let stack = []
+    let cur = root
+    while (cur || stack.length) {
+        while (cur) {
+            result.push(cur.value)
+            stack.push(cur)
+            cur = cur.left
+        }
+        cur = stack.pop()
+        cur = cur.right
+    }
+    return result
+}
