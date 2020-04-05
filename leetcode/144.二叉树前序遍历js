@@ -1,7 +1,18 @@
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
 // 递归
 var preorderTraversal = function (root, arr = []) {
     if (root) {
-        arr.push(root.value)
+        arr.push(root.val)
         preorderTraversal(root.left, arr)
         preorderTraversal(root.right, arr)
     }
@@ -17,7 +28,7 @@ var preorderTraversal = function (root) {
     let cur = root
     while (cur || stack.length) {
         while (cur) {
-            result.push(cur.value)
+            result.push(cur.val)
             stack.push(cur)
             cur = cur.left
         }
