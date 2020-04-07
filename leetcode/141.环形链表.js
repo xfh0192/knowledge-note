@@ -18,6 +18,7 @@ var hasCycle = function (head) {
         } else {
             cache.add(head)
         }
+        head = head.next
     }
     return false
 }
