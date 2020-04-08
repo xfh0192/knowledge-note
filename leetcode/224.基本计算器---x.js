@@ -59,11 +59,49 @@ var calculate = function(s) {
 // ====
 
 var calculate = function(s) {
-    let map = {
-        '(': ')',
-    }
-    let temp = []
-    for (let i = 0; i < s.length; i++) {
+    let sum = 0
+    let stack = []
+    let sign = 1
+    let i = 0
+    let len = s.length
 
+    while (i < len) {
+        let ch = s.charAt(i)
+        if (ch === ' ') {
+            i++
+        } 
+        else if (ch === '+') {
+            sign = 1
+            i++
+        } 
+        else if (ch === '-') {
+            sign = -1
+            i++
+        } 
+        else if (ch === '(') {
+            stack.push(sum, sign)
+            sum = 0
+            sign = 1
+            i++
+        }
+        else if (ch === ')') {
+            sum = sum * stack.pop() + stack.pop()
+            i++
+        }
+        else {
+            let temp = ch
+            i++
+            // 数字
+            while(i < n && Number(ch)) {
+                temp = temp + ch
+                i++
+            }
+            sum = sum + Number(temp) * sign
+        }
     }
+    return sum;
 };
+
+function isNumber(num) {
+    return Number.isInteger(num) && !Number.isNaN(num)
+}
