@@ -50,3 +50,22 @@ var lowestCommonAncestor = function(root, p, q) {
 };
 
 // ====
+
+var lowestCommonAncestor = function(root, p, q) {
+    return recurseTree(root, p, q)
+}
+
+function recurseTree(root, p, q) {
+    if (!root) return root
+    if (root === p || root === q) return root
+    let left = recurseTree(root.left, p, q)
+    let right = recurseTree(root.right, p, q)
+    if (left && right) {
+        return root
+    } else if (left) {
+        return left
+    } else if (right) {
+        return right
+    }
+    return null
+}
