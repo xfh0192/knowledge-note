@@ -10,8 +10,12 @@ var superEggDrop = function(K, N) {
     let left = 1
     let right = N
     let n = 0
-    while(right - left !== 0) {
-        N = parseInt((left + right - 1) / 2)
+    while(left < right) {
+        N = Math.ceil((right - left) / 2) + left
+        // console.log(N)
+        if (Math.abs(N - K) <= 1) {
+            return n + 2
+        }
         if (N > K) {
             right = N
         } else {
@@ -23,5 +27,6 @@ var superEggDrop = function(K, N) {
 };
 
 // console.log(superEggDrop(1,2))
-console.log(superEggDrop(2,6))
-console.log(superEggDrop(3,14))
+console.log(superEggDrop(1,3))
+// console.log(superEggDrop(2,6))
+// console.log(superEggDrop(3,14))

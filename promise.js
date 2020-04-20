@@ -15,9 +15,26 @@ class Promise {
 
     resolve(value) {
         if (this.state !== 'pending') return;
-        this.state = 'fulfilled'
+        // this.state = 'fulfilled'
         this.value = value;
-        this.resolveTask.forEach(task => this.value = resolvePromise(task, this.value))
+        
+        if (value.thenable) {
+            value.then(res => {
+                // this.value = res
+                this.state = 'fulfilled'
+                this.resolve(res)
+                // new Promise((resolve, reject) => {
+                //     resolve(res)
+                // })
+                // pm.resolveTask = pm.resolveTask.concat(this.resolveTask)
+                // pm.rejectTask = pm.rejectTask.concat(this.rejectTask)
+                // return pm
+            })
+        }
+        else {
+            this.state = 'fulfilled'
+            // this.resolveTask.forEach(task => this.value = resolvePromise(task, this.value))
+        }
     }
     
     reject(value) {
@@ -30,19 +47,20 @@ class Promise {
     then(onFulfilled, onRejected) {
         if (this.state === 'pending') {
             return new Promise((resolve, reject) => {
-                this.resolveTask.push(value => {
-                    let v = onFulfilled(value)
-                })
-                this.rejectTask.push(value => {
-                    onRejected(value)
-                })
+                resolve(this.value)
+                // this.resolveTask.push(value => {
+                //     let v = onFulfilled(value)
+                // })
+                // this.rejectTask.push(value => {
+                //     onRejected(value)
+                // })
             });
         }
         if (this.state === 'fulfilled') {
-            return new Promise((resolve, reject) => onFulfilled(this.value))
+            return new Promise((resolve, reject) => resolve(onFulfilled(this.value)))
         }
         if (this.state === 'rejected') {
-            return new Promise((resolve, reject) => onRejected(this.value))
+            return new Promise((resolve, reject) => reject(onRejected(this.value)))
         }
     }
 
