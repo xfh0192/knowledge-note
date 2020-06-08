@@ -20,7 +20,7 @@ var postorderTraversal = function(root, arr = []) {
 
 // ====
 
-// 迭代【思路，按照中序遍历思路，但是过程相反，最后结果reverse】
+// 迭代【思路，按照前序遍历思路，但是过程相反，最后结果reverse】
 var postorderTraversal = function(root) {
     let result = []
     let stack = []

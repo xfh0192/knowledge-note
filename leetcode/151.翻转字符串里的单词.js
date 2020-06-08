@@ -69,23 +69,26 @@ function reverse(s, left, right) {
         let temp = s[left]
         s[left] = s[right]
         s[right] = temp
+        left = left + 1
+        right = right - 1
     }
     return s.join('')
 }
 
 function reverseEachWord(s) {
     let start = 0, end = 0
+    let n = s.length
     let s = s.split(' ')
     let stack = []
 
-    while(start < s.length) {
+    while(start < n) {
         // 循环至单词末尾
         while(end < n && s[end] !== ' ') {
             end++
         }
 
         // 翻转单词
-        let word = reverse(s.slice(start, end))
+        let word = reverse(s.slice(start, end), start, end - 1)
         stack.push(word)
         
         // 更新start，寻找下一个单词
@@ -98,8 +101,8 @@ function reverseEachWord(s) {
 // 执行函数
 var reverseWords = function(s) {
     s = trimSpaces(s)
-    s = reverse(s)
-    s = reverseEachWord(s)
+    s = reverse(s, 0, s.length - 1)  // 翻转字符串
+    s = reverseEachWord(s)  // 翻转每个单词
     return s
 }
 

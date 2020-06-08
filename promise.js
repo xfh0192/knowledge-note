@@ -1,3 +1,5 @@
+// 看这个：https://mp.weixin.qq.com/s/_YxwV2umR7PH-R2ouCepSQ
+
 // TODO: 尚待检查：假如then的fulfilled/rejected返回了Promise，使用resolvePromise是否正确
 
 class Promise {

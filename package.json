@@ -4,8 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsnode": "nodemon --exec 'ts-node' ./ts/app/use.ts"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.0.5",
+    "common-bin": "^2.8.3",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.3"
+  }
 }
