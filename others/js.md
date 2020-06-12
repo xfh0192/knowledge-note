@@ -67,6 +67,8 @@ function instanceof (left, right) {
     node：
       - 比web多了两个定时器方法：nextTick、setImmediate
 
+6. promise.all 执行顺序？出现错误怎么处理？
+
 6. 浏览器渲染顺序
 
 7. 异步编程
@@ -153,6 +155,30 @@ function instanceof (left, right) {
 15. cmd/amd
 
 16. 装饰器
+    - https://es6.ruanyifeng.com/#docs/decorator#%E6%96%B9%E6%B3%95%E7%9A%84%E8%A3%85%E9%A5%B0
+    - 装饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。
+    - **只能装饰类、类的方法**，不能装饰函数。因为存在函数提升
+      - 类：装饰器函数的第一个参数，就是所要装饰的目标类。
+      - 类的方法：
+          1. 装饰器第一个参数是类的原型对象，上例是Person.prototype，装饰器的本意是要“装饰”类的实例，但是这个时候实例还没生成，所以只能去装饰原型（这不同于类的装饰，那种情况时target参数指的是类本身）；第二个参数是所要装饰的属性名，第三个参数是该属性的描述对象。
+          2. 另外，上面代码说明，装饰器（readonly）会修改属性的描述对象（descriptor），然后被修改的描述对象再用来定义属性。
+          ```
+              function readonly(target, name, descriptor){
+                // descriptor对象原来的值如下
+                // {
+                //   value: specifiedFunction,
+                //   enumerable: false,
+                //   configurable: true,
+                //   writable: true
+                // };
+                descriptor.writable = false;
+                return descriptor;
+              }
+
+              readonly(Person.prototype, 'name', descriptor);
+              // 类似于
+              Object.defineProperty(Person.prototype, 'name', descriptor);
+          ```
 
 17. 面向对象、函数式编程
       1. 面向对象编程（Object Oriented Programming，缩写为 OOP）是目前主流的编程范式。

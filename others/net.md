@@ -13,7 +13,7 @@
 
 7. xss、csrf
 
-8. http、https
+8. http、https、http1.1、http2
   - 对称加密、非对称加密、证书
     ```
       - https://blog.csdn.net/jiangshangchunjiezi/article/details/88545263

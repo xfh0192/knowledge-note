@@ -3,3 +3,31 @@ web:
 
 node:
 - [common-bin 简单基础命令行类]()
+- [lighthouse 简单性能检测/分析工具]()
+- [nodemon 服务启动工具]()
+- [node中的util.promisify 将原有的回调方法包装为promise]()
+- [supertest 简单http库，测试nodejs的http请求](https://github.com/visionmedia/supertest)
+- [mocha 单元测试框架]()
+- [jest 单元测试框架]()
+- [vite 基于service worker和websocket增量热更新web，开发用](http://shymean.com/article/%E5%B0%9D%E9%B2%9CVue3%E2%80%94%E2%80%94vite%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90)
+- [co-wechat-api 封装wx接口]
+
+其他：
+- [ngrok 内网穿透(不太推荐，动态ip，会变)]
+  
+前端：
+- vuepress 文档
+- (无限滚动列表体验)[http://developerdizzle.github.io/react-virtual-list/]
+- 自己控制热更新（RN）
+- 团队脚手架
+- 缓存问题
+
+技术提升：
+1. 算法和数据结构（书：算法第四版）
+   - 动态规划
+   - 树
+   - 。。。
+2. 网络协议（书：图解http，图解tcp，http权威指南）
+3. 设计模式
+4. 操作系统
+5. 软件工程（书：人月神话，unix编程艺术）
