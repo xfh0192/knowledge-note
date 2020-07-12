@@ -1,19 +1,53 @@
-1. TCP和UDP的区别
+1. 网络协议7层
+    - 从上到下:
+      1. 应用层 - ssh/http/smtp/ssl/ftp/mine...
+      2. 表示层
+      3. 会话层
+      4. 传输层 - tcp/udp...
+      5. 网络层 - IPv4/IPv6...
+      6. 数据链路层 - 以太网、无线LAN
+      7. 物理层
 
-2. 网络协议7层
+2. TCP和UDP的区别
+  > https://blog.csdn.net/zhang6223284/article/details/81414149
 
-3. tcp的三次握手、四次挥手
+   - tcp有状态（需要维持连接的稳定性、保证数据包的顺序）、udp无状态
+   - TCP 是面向连接的，UDP 是面向无连接的
+     UDP程序结构较简单
+     TCP 是面向字节流的，UDP 是基于数据报的
+     TCP 保证数据正确性，UDP 可能丢包
+     TCP 保证数据顺序，UDP 不保证
 
-4. 强缓存、协商缓存
+   - udp报文主要元数据只有端口
+   - tcp报文包含端口、数据包的序号、状态位（SYN 是发起一个链接，ACK 是回复，RST 是重新连接，FIN 是结束连接。因为 TCP 是面向连接的，因此需要双方维护连接的状态，这些状态位的包会引起双方的状态变更）
 
-5. http特点
+4. tcp、http是什么
+
+5. tcp的三次握手、四次挥手
+    A客户端，B服务端
+   - 建立连接，需要有三次握手：
+      A -> B A告诉B，需要建立连接（发送建立连接数据包）
+      B -> A B返回A，准备好建立连接了
+      A -> B A告诉B，收到消息，共同维护连接状态
+
+   - 断开连接，需要有四次挥手
+      A -> B A告诉B，发出连接释放报文，并且停止发送数据
+      B -> A B收到连接释放报文，发出确认报文（A收到后，处于半关闭状态，不会再发数据但是会接收数据）
+      B -> A B将最后的数据发送完毕后，就向客户端发送连接释放报文，等待客户端确认
+      A -> B A客户端收到服务器B的连接释放报文后，必须发出确认。B接收到释放报文后，结束TCP连接
+
+6. 强缓存、协商缓存
+
+7. http特点
     - 无状态
+    
+8. socket
 
-6. cookie、session
+9. cookie、session
 
-7. xss、csrf
+10. xss、csrf
 
-8. http、https、http1.1、http2
+11. http、https、http1.1、http2
   - 对称加密、非对称加密、证书
     ```
       - https://blog.csdn.net/jiangshangchunjiezi/article/details/88545263

@@ -9,10 +9,39 @@
  */
 
 /**
+ *  f(n) = f(n - lastCoin) + 1  n=总价
+ */
+
+/**
  * @param {number[]} coins
  * @param {number} amount
  * @return {number}
  */
 var coinChange = function(coins, amount) {
-
+  if (amount < 0) return -1
+  if (amount === 0) return 0
+  
+  // coins = coins.sort((a,b) => a - b)
+  let dp = [0]
+  for (let i = 1; i <= amount; i++) {
+    dp[i] = Infinity
+    for (let j = 0; j < coins.length; j++) {
+      if (i - coins[j] >= 0) {
+        dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1)
+      }
+    }
+  }
+  let res = isFinite(dp[amount]) ? dp[amount] : -1
+  return res
 };
+
+let a = [1,2,5]
+let t = 11 // 3
+
+// a = [2]
+// t = 3 // -1
+
+a = [186,419,83,408]
+t = 6249 // 20
+
+coinChange(a,t)

@@ -22,3 +22,9 @@
     - (导图)[https://www.processon.com/view/link/5e70b1c2e4b011fcce9b89b5#map]
 6. process.nextTick/setImmediate/setTimeout
 7. require 引入文件搜寻顺序
+
+8. net模块 
+   原理：Net模块提供⼀个异步API能够创建基于流的TCP服务器，客户端与服务器建⽴连接后，服务器可以获得⼀个全双⼯Socket对象，服务器可以保存Socket对象列表，在接收某客户端消息时，推送给其他客户端。
+
+9. html与libuv（服务端）中，事件循环的差异：
+    1. 事件循环的过程没有
