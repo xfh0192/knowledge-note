@@ -48,30 +48,11 @@ function instanceof (left, right) {
 
 4. 讲一下websocket
 
-5. 事件循环 event loop
-  - 执行栈
-  - 异步操作：网络请求、定时器等
-  - 消息队列
 
-5. 事件循环、macrotask、microtask
-    - (task/microtask)[https://zhuanlan.zhihu.com/p/24460769]
 
-    web：
-      - macrotask 宏任务，包括：js线程同步执行的任务、定时器任务等
-      - microtask 微任务，包括：promise.then的回调函数，mutation observe等
-      - 当每一个宏任务执行完毕，js线程会检查微任务的执行条件，一旦条件全部满足，马上执行所有微任务，清空微任务队列
-      - 微任务执行条件：1. 执行栈为空 2. 微任务队列不为空
-      - 微任务有可能向队列添加新的微任务，仍然会在当前队列中被执行
-      - 浏览器渲染会在每一次微任务队列清空后执行，也就是说如果微任务进行了一批dom操作，浏览器将会渲染一次
+8. promise.all 执行顺序？出现错误怎么处理？
 
-    node：
-      - 比web多了两个定时器方法：nextTick、setImmediate
-
-6. promise.all 执行顺序？出现错误怎么处理？
-
-6. 浏览器渲染顺序
-
-7. 异步编程
+9. 异步编程
      > 参考：(异步编程的4种方法)[http://www.ruanyifeng.com/blog/2012/12/asynchronous%EF%BC%BFjavascript.html]
 
     - js的执行环境是单线程（single thread）
@@ -82,9 +63,9 @@ function instanceof (left, right) {
     1. 串联异步处理
     2. 事件监听方式处理
 
-8. generator
+10. generator
 
-9. 注意sort函数，(链接)[https://www.w3school.com.cn/js/jsref_sort.asp]
+11. 注意sort函数，(链接)[https://www.w3school.com.cn/js/jsref_sort.asp]
       - 如果调用该方法时没有使用参数，将按字母顺序对数组中的元素进行排序，说得更精确点，是按照字符编码的顺序进行排序。要实现这一点，首先应把数组的元素都转换成字符串（如有必要），以便进行比较。
 
        如果想按照其他标准进行排序，就需要提供比较函数，该函数要比较两个值，然后返回一个用于说明这两个值的相对顺序的数字。比较函数应该具有两个参数 a 和 b，其返回值如下：
@@ -121,9 +102,9 @@ function instanceof (left, right) {
           document.write(arr.sort((a,b) => a - b))    // 注意这里，按照返回的值大于0还是小于0排序
       ```
 
-10. ==/===
-11. == 的隐性类型转换规则
-12. Object.is()
+12. ==/===
+13. == 的隐性类型转换规则
+14. Object.is()
     - https://dmitripavlutin.com/object-is-vs-strict-equality-operator/
       > The difference between strict equality check and Object.is() lies in how NaN and how negative zero -0 are treated.
 
@@ -137,7 +118,7 @@ function instanceof (left, right) {
         Object.is(-0, +0); // => false
       ```
 
-13. https://es6.ruanyifeng.com/#docs/string-methods
+15. https://es6.ruanyifeng.com/#docs/string-methods
     
     - 'a'.charAt(i) 返回字符（不能识别大于ffff的字符）
 
@@ -148,13 +129,13 @@ function instanceof (left, right) {
     - String.fromCodePoint(0x20BB7) // "ஷ"
     返回unicode对应的字符，能识别
 
-14. toString parseInt 处理进制
+16. toString parseInt 处理进制
     - (10).toString(16) // 'a'
     - parseInt(x, r)  // x: 待转换数; r: 待转换数的进制  return => 10进制数
 
-15. cmd/amd
+17. cmd/amd
 
-16. 装饰器
+18. 装饰器
     - https://es6.ruanyifeng.com/#docs/decorator#%E6%96%B9%E6%B3%95%E7%9A%84%E8%A3%85%E9%A5%B0
     - 装饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。
     - **只能装饰类、类的方法**，不能装饰函数。因为存在函数提升
@@ -180,7 +161,7 @@ function instanceof (left, right) {
               Object.defineProperty(Person.prototype, 'name', descriptor);
           ```
 
-17. 面向对象、函数式编程
+19. 面向对象、函数式编程
       1. 面向对象编程（Object Oriented Programming，缩写为 OOP）是目前主流的编程范式。
           - 每一个对象都是功能中心，具有明确分工，可以完成接受信息、处理数据、发出信息等任务。
           - 对象可以复用，通过继承机制还可以定制。因此，面向对象编程具有灵活、代码可复用、高度模块化等特点，容易维护和开发，比起由一系列函数或指令组成的传统的过程式编程（procedural programming），更适合多人合作的大型软件项目。
@@ -203,5 +184,10 @@ function instanceof (left, right) {
             - 柯里化（Currying）
             - 闭包（Closure）
 
-18. 函数升阶、柯里化
+20. 函数升阶、柯里化
     - 概念同上
+
+21. 前端video播放器
+    - https://mp.weixin.qq.com/s/thnhhbw2ieFywCFSCHXyGQ
+    - Blob：在 JavaScript 中 Blob 类型的对象表示不可变的类似文件对象的原始数据
+    - TypeBuffer：它用于表示通用的，固定长度的原始二进制数据缓冲区。你不能直接操纵 ArrayBuffer 的内容，而是需要创建一个 TypedArray 对象或 DataView 对象，该对象以特定格式表示缓冲区，并使用该对象读取和写入缓冲区的内容。

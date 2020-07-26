@@ -94,3 +94,7 @@
       子网掩码为1的位置，就是网络号，网络号相同的主机之间才能直连
 
     ```
+
+10. RESTful API
+    - http://www.ruanyifeng.com/blog/2011/09/restful.html
+    - 定名为REST，即Representational State Transfer的缩写
