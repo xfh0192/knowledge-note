@@ -2,68 +2,86 @@
 
 // TODO: 尚待检查：假如then的fulfilled/rejected返回了Promise，使用resolvePromise是否正确
 
-class Promise {
+class MyPromise {
     constructor(cb) {
-        this.state = 'pending'
-        this.value = null;
-        this.resolveTask = [];
-        this.rejectTask = []
-        try {
-            cb(this.resolve.bind(this), this.reject.bind(this))
-        } catch(err) {
-            this.reject(err)
+      this._state = 'pending'
+      this._value = null;
+      this._resolveQueue = [];
+      this._rejectQueue = []
+
+      const _resolve = (value) => {
+        // 把resolve执行回调的操作封装成一个函数,放进setTimeout里,以兼容executor是同步代码的情况
+        // 保证执行流程是：new Promise -> then()收集回调 -> resolve/reject执行回调
+        const run = () => {
+          if (this._state !== 'pending') return;
+          this._state = 'fulfilled'
+          this._value = value;
+
+          while (this._resolveQueue.length) {
+            const callback = this._resolveQueue.shift()
+            callback(value)
+          }
         }
+        setTimeout(run)
+      }
+      
+      const _reject = (value) => {
+        const run = () => {
+          if (this._state !== 'pending') return;
+          this._state = 'rejected'
+          this._value = value
+
+          while (this._rejectQueue.length) {
+            const callback = this._rejectQueue.shift()
+            callback(value)
+          }
+        }
+        setTimeout(run)
+      }
+
+      cb(_resolve, _reject)
     }
 
-    resolve(value) {
-        if (this.state !== 'pending') return;
-        // this.state = 'fulfilled'
-        this.value = value;
-        
-        if (value.thenable) {
-            value.then(res => {
-                // this.value = res
-                this.state = 'fulfilled'
-                this.resolve(res)
-                // new Promise((resolve, reject) => {
-                //     resolve(res)
-                // })
-                // pm.resolveTask = pm.resolveTask.concat(this.resolveTask)
-                // pm.rejectTask = pm.rejectTask.concat(this.rejectTask)
-                // return pm
-            })
-        }
-        else {
-            this.state = 'fulfilled'
-            // this.resolveTask.forEach(task => this.value = resolvePromise(task, this.value))
-        }
-    }
-    
-    reject(value) {
-        if (this.state !== 'pending') return;
-        this.state = 'rejected'
-        this.value = value
-        this.rejectTask.forEach(task => this.value = resolvePromise(task, this.value))
-    }
 
     then(onFulfilled, onRejected) {
-        if (this.state === 'pending') {
-            return new Promise((resolve, reject) => {
-                resolve(this.value)
-                // this.resolveTask.push(value => {
-                //     let v = onFulfilled(value)
-                // })
-                // this.rejectTask.push(value => {
-                //     onRejected(value)
-                // })
-            });
+      // 根据规范，如果then的参数不是function，则我们需要忽略它, 让链式调用继续往下执行
+      typeof onFulfilled !== 'function' ? onFulfilled = value => value : null
+      typeof onRejected !== 'function' ? onRejected = error => error : null
+
+      return new Promise((resolve, reject) => {
+
+        const fulfilledFn = (value) => {
+          try {
+            const x = onFulfilled(value)
+            x instanceof Promise ? x.then(resolve, reject) : resolve(x)
+          } catch(e) {
+            reject(e)
+          }
         }
-        if (this.state === 'fulfilled') {
-            return new Promise((resolve, reject) => resolve(onFulfilled(this.value)))
+
+        const rejectFn = (error) => {
+          try {
+            const x = onRejected(error)
+            x instanceof Promise ? x.then(resolve, reject) : resolve(x)
+          } catch(e) {
+            reject(e)
+          }
         }
-        if (this.state === 'rejected') {
-            return new Promise((resolve, reject) => reject(onRejected(this.value)))
+
+        // 
+        switch (this._state) {
+          case 'pending':
+            this._resolveQueue.push(fulfilledFn)
+            this._rejectQueue.push(rejectFn)
+            break;
+          case 'fulfilled':
+            fulfilledFn(this._value)
+            break;
+          case 'rejected':
+            rejectFn(this._value)
+            break;
         }
+      })
     }
 
     catch(cb) {
