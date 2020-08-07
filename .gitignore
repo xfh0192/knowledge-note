@@ -7,3 +7,5 @@ run/
 *.swp
 *.lock
 runtime.json
+
+/article/工作/
