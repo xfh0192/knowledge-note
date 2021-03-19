@@ -3,7 +3,7 @@
  * @return {number[][]}
  */
 
-位运算
+// 位运算
 var subsets = function(nums) {
   let res = []
   let n = nums.length
