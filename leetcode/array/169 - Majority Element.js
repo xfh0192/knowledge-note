@@ -31,3 +31,6 @@ var majorityElement = function(nums) {
   }
   return major
 };
+
+let a = [1,2,3]
+majorityElement(a)
