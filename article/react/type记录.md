@@ -216,6 +216,8 @@ let events = [
   'selectionchange',  // 只挂载在document上
   // ...
 ]
+
+# packages\react-dom\src\events\DOMPluginEventSystem.js
 // 媒体事件
 export const mediaEventTypes: Array<DOMEventName> = [
   'abort',
@@ -260,5 +262,121 @@ export const nonDelegatedEvents: Set<DOMEventName> = new Set([
   // we just take it from the media events array.
   ...mediaEventTypes,
 ]);
+
+// 分离/独立 replay 事件？
+const discreteReplayableEvents: Array<DOMEventName> = [
+  'mousedown',
+  'mouseup',
+  'touchcancel',
+  'touchend',
+  'touchstart',
+  'auxclick',
+  'dblclick',
+  'pointercancel',
+  'pointerdown',
+  'pointerup',
+  'dragend',
+  'dragstart',
+  'drop',
+  'compositionend',
+  'compositionstart',
+  'keydown',
+  'keypress',
+  'keyup',
+  'input',
+  'textInput', // Intentionally camelCase
+  'copy',
+  'cut',
+  'paste',
+  'click',
+  'change',
+  'contextmenu',
+  'reset',
+  'submit',
+];
+
+// # packages\react-dom\src\events\DOMEventProperties.js
+// 单词触发事件
+const simpleEventPluginEvents = [
+  'abort',
+  'auxClick',
+  'cancel',
+  'canPlay',
+  'canPlayThrough',
+  'click',
+  'close',
+  'contextMenu',
+  'copy',
+  'cut',
+  'drag',
+  'dragEnd',
+  'dragEnter',
+  'dragExit',
+  'dragLeave',
+  'dragOver',
+  'dragStart',
+  'drop',
+  'durationChange',
+  'emptied',
+  'encrypted',
+  'ended',
+  'error',
+  'gotPointerCapture',
+  'input',
+  'invalid',
+  'keyDown',
+  'keyPress',
+  'keyUp',
+  'load',
+  'loadedData',
+  'loadedMetadata',
+  'loadStart',
+  'lostPointerCapture',
+  'mouseDown',
+  'mouseMove',
+  'mouseOut',
+  'mouseOver',
+  'mouseUp',
+  'paste',
+  'pause',
+  'play',
+  'playing',
+  'pointerCancel',
+  'pointerDown',
+  'pointerMove',
+  'pointerOut',
+  'pointerOver',
+  'pointerUp',
+  'progress',
+  'rateChange',
+  'reset',
+  'seeked',
+  'seeking',
+  'stalled',
+  'submit',
+  'suspend',
+  'timeUpdate',
+  'touchCancel',
+  'touchEnd',
+  'touchStart',
+  'volumeChange',
+  'scroll',
+  'toggle',
+  'touchMove',
+  'waiting',
+  'wheel',
+];
+
+// React 把事件做了分类
+
+// DiscreteEvent: 失焦、聚焦类的事件。调用 dispatchDiscreteEvent
+// UserBlockingEvent: 用户连续行操作。比如鼠标移动、拖拽等。调用 scheduler 的 runWithPriority
+// ContinuousEvent && default: 连续性事件。 直接执行
+
+// 上面三种事件其实最后都是调用了 dispatchEvent 函数，但是因为优先级的原因事件的调度方法不一样，最后的执行事件也不一样
+// 事件优先级
+export const DiscreteEvent: EventPriority = 0;
+export const UserBlockingEvent: EventPriority = 1;
+export const ContinuousEvent: EventPriority = 2;
 
 ```
