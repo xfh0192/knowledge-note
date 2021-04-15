@@ -142,6 +142,16 @@ function FiberRootNode(containerInfo, tag, hydrate) {
   }
 }
 
+export function createLaneMap<T>(initial: T): LaneMap<T> {
+  // Intentionally pushing one by one.
+  // https://v8.dev/blog/elements-kinds#avoid-creating-holes
+  const laneMap = [];
+  for (let i = 0; i < TotalLanes; i++) {
+    laneMap.push(initial);
+  }
+  return laneMap;
+}
+
 # packages\react-reconciler\src\ReactFiber.new.js
 // FiberNode
 function FiberNode(
@@ -155,10 +165,10 @@ function FiberNode(
   this.key = key;
   this.elementType = null;
   this.type = null;
-  this.stateNode = null;
+  this.stateNode = null;  // fiberRoot 貌似只有fiberRoot下的fiber才会存在stateNode指向fiberRoot
 
   // Fiber
-  this.return = null;
+  this.return = null; // parentFiber
   this.child = null;
   this.sibling = null;
   this.index = 0;
@@ -181,7 +191,7 @@ function FiberNode(
   this.lanes = NoLanes;
   this.childLanes = NoLanes;
 
-  this.alternate = null;
+  this.alternate = null;  // 貌似指向另一颗相同结构的fiber树
 
   if (enableProfilerTimer) {
     // Note: The following is done to avoid a v8 performance cliff.
@@ -379,4 +389,108 @@ export const DiscreteEvent: EventPriority = 0;
 export const UserBlockingEvent: EventPriority = 1;
 export const ContinuousEvent: EventPriority = 2;
 
+```
+
+===
+
+## 以下为updateContainer开始发现的type
+
+```javascript
+
+// lane
+
+// lane 应该是作为优先级标记或者是时间顺序标记的
+
+export type Lanes = number;
+export type Lane = number;
+export type LaneMap<T> = Array<T>;
+
+export const TotalLanes = 31;
+
+export const NoLanes: Lanes = /*                        */ 0b0000000000000000000000000000000;
+export const NoLane: Lane = /*                          */ 0b0000000000000000000000000000000;
+
+export const SyncLane: Lane = /*                        */ 0b0000000000000000000000000000001;
+
+const InputContinuousHydrationLane: Lane = /*           */ 0b0000000000000000000000000000010;
+export const InputContinuousLane: Lanes = /*            */ 0b0000000000000000000000000000100;
+
+export const DefaultHydrationLane: Lane = /*            */ 0b0000000000000000000000000001000;
+export const DefaultLane: Lanes = /*                    */ 0b0000000000000000000000000010000;
+
+const TransitionHydrationLane: Lane = /*                */ 0b0000000000000000000000000100000;
+const TransitionLanes: Lanes = /*                       */ 0b0000000001111111111111111000000;
+const TransitionLane1: Lane = /*                        */ 0b0000000000000000000000001000000;
+const TransitionLane2: Lane = /*                        */ 0b0000000000000000000000010000000;
+const TransitionLane3: Lane = /*                        */ 0b0000000000000000000000100000000;
+const TransitionLane4: Lane = /*                        */ 0b0000000000000000000001000000000;
+const TransitionLane5: Lane = /*                        */ 0b0000000000000000000010000000000;
+const TransitionLane6: Lane = /*                        */ 0b0000000000000000000100000000000;
+const TransitionLane7: Lane = /*                        */ 0b0000000000000000001000000000000;
+const TransitionLane8: Lane = /*                        */ 0b0000000000000000010000000000000;
+const TransitionLane9: Lane = /*                        */ 0b0000000000000000100000000000000;
+const TransitionLane10: Lane = /*                       */ 0b0000000000000001000000000000000;
+const TransitionLane11: Lane = /*                       */ 0b0000000000000010000000000000000;
+const TransitionLane12: Lane = /*                       */ 0b0000000000000100000000000000000;
+const TransitionLane13: Lane = /*                       */ 0b0000000000001000000000000000000;
+const TransitionLane14: Lane = /*                       */ 0b0000000000010000000000000000000;
+const TransitionLane15: Lane = /*                       */ 0b0000000000100000000000000000000;
+const TransitionLane16: Lane = /*                       */ 0b0000000001000000000000000000000;
+
+const RetryLanes: Lanes = /*                            */ 0b0000111110000000000000000000000;
+const RetryLane1: Lane = /*                             */ 0b0000000010000000000000000000000;
+const RetryLane2: Lane = /*                             */ 0b0000000100000000000000000000000;
+const RetryLane3: Lane = /*                             */ 0b0000001000000000000000000000000;
+const RetryLane4: Lane = /*                             */ 0b0000010000000000000000000000000;
+const RetryLane5: Lane = /*                             */ 0b0000100000000000000000000000000;
+
+export const SomeRetryLane: Lane = RetryLane1;
+
+export const SelectiveHydrationLane: Lane = /*          */ 0b0001000000000000000000000000000;
+
+const NonIdleLanes = /*                                 */ 0b0001111111111111111111111111111;
+
+export const IdleHydrationLane: Lane = /*               */ 0b0010000000000000000000000000000;
+export const IdleLane: Lanes = /*                       */ 0b0100000000000000000000000000000;
+
+export const OffscreenLane: Lane = /*                   */ 0b1000000000000000000000000000000;
+
+
+// mode
+
+export type TypeOfMode = number;
+
+export const NoMode = /*            */ 0b000000;
+// TODO: Remove ConcurrentMode by reading from the root tag instead
+export const ConcurrentMode = /*    */ 0b000001;
+export const ProfileMode = /*       */ 0b000010;
+export const DebugTracingMode = /*  */ 0b000100;
+export const StrictLegacyMode = /*  */ 0b001000;
+export const StrictEffectsMode = /* */ 0b010000;
+
+
+//update
+
+export type Update<State> = {|
+  // TODO: Temporary field. Will remove this by storing a map of
+  // transition -> event time on the root.
+  eventTime: number,
+  lane: Lane,
+
+  tag: 0 | 1 | 2 | 3,
+  payload: any,
+  callback: (() => mixed) | null,
+
+  next: Update<State> | null,
+|};
+
+export type SharedQueue<State> = {|
+  pending: Update<State> | null,
+  interleaved: Update<State> | null,
+  lanes: Lanes,
+|};
+```
+
+```javascript
+Interactions
 ```

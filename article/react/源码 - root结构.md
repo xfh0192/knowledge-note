@@ -22,11 +22,13 @@ let container = {
       current: {
 
         // container._reactRootContainer._internalRoot
-        stateNode,
+        stateNode,  // fiberRoot
+
+        mode, // NoMode
         memoizedState: {
           element: null,
           cache: new Map() | null,
-        }
+        },
         // type: UpdateQueue
         updateQueue: {
           baseState: fiber.memoizedState,
@@ -38,7 +40,10 @@ let container = {
             lanes: NoLanes,
           },
           effects: null,
-        }
+        },
+        
+        context: {},
+        alternate
       }
     }
   }
