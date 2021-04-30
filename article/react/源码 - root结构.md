@@ -43,7 +43,9 @@ let container = {
         },
         
         context: {},
-        alternate
+        alternate,
+        pendingInteractionMap: Map<Lane>,
+
       }
     }
   }

@@ -1,6 +1,6 @@
 ```javascript
 
-# mpackages\react-reconciler\src\ReactFiberBeginWork.new.js
+# packages\react-reconciler\src\ReactFiberBeginWork.new.js
 
 function beginWork(
   current: Fiber | null,

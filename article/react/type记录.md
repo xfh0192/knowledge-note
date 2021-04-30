@@ -10,6 +10,7 @@ export type RootType = {
 type OpaqueRoot = FiberRoot;
 
 // 组件真正的updater
+// # packages\react-reconciler\src\ReactFiberClassComponent.new.js
 const classComponentUpdater = {
   isMounted,
   enqueueSetState(inst, payload, callback) {
