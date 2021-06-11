@@ -40,6 +40,7 @@ let container = {
             lanes: NoLanes,
           },
           effects: null,
+          lastEffect: // 链表，保存当前组件的useEffect作用
         },
         
         context: {},

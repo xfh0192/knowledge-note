@@ -9,6 +9,18 @@ export type RootType = {
 
 type OpaqueRoot = FiberRoot;
 
+// 组件Component
+class CustomComp extends React.Component {}
+// CustomComp 将包含一些属性
+CustomComp = {
+  ...CustomComp,
+  // React添加
+  // source: packages\shared\ReactInstanceMap.js
+  // exp. packages\react-reconciler\src\ReactFiberReconciler.new.js 函数: getContextForSubtree
+  _reactInternals,  // 由组件类指向当前组件实例的fiber
+
+}
+
 // 组件真正的updater
 // # packages\react-reconciler\src\ReactFiberClassComponent.new.js
 const classComponentUpdater = {
@@ -87,19 +99,19 @@ function FiberRootNode(containerInfo, tag, hydrate) {
   this.tag = tag;
   this.containerInfo = containerInfo;
   this.pendingChildren = null;
-  this.current = null;
+  this.current = null;  // 指向rootFiber
   this.pingCache = null;
   this.finishedWork = null;
   this.timeoutHandle = noTimeout;
-  this.context = null;
+  this.context = null;  // context 上下文，提供给子fiber查找context用
   this.pendingContext = null;
   this.hydrate = hydrate;
   this.callbackNode = null;
   this.callbackPriority = NoLane;
-  this.eventTimes = createLaneMap(NoLanes);
+  this.eventTimes = createLaneMap(NoLanes);   // 记录不同lane对应的eventTime
   this.expirationTimes = createLaneMap(NoTimestamp);
 
-  this.pendingLanes = NoLanes;
+  this.pendingLanes = NoLanes;  // 记录多个lane
   this.suspendedLanes = NoLanes;
   this.pingedLanes = NoLanes;
   this.mutableReadLanes = NoLanes;
@@ -166,7 +178,7 @@ function FiberNode(
   this.key = key;
   this.elementType = null;
   this.type = null;
-  this.stateNode = null;  // fiberRoot 貌似只有fiberRoot下的fiber才会存在stateNode指向fiberRoot
+  this.stateNode = null;  // 指向组件实例
 
   // Fiber
   this.return = null; // parentFiber
@@ -185,7 +197,7 @@ function FiberNode(
   this.mode = mode;
 
   // Effects
-  this.flags = NoFlags;
+  this.flags = NoFlags; // 标记存在哪些类型的effect
   this.subtreeFlags = NoFlags;
   this.deletions = null;
 
@@ -221,6 +233,62 @@ function FiberNode(
     this.treeBaseDuration = 0;
   }
 }
+
+// rootDomRoot 控制 rootFiber.mode
+export type RootTag = 0 | 1;
+
+export const LegacyRoot = 0;
+export const ConcurrentRoot = 1;
+
+// mode
+
+export type TypeOfMode = number;
+
+export const NoMode = /*            */ 0b000000;
+// TODO: Remove ConcurrentMode by reading from the root tag instead
+export const ConcurrentMode = /*    */ 0b000001;
+export const ProfileMode = /*       */ 0b000010;
+export const DebugTracingMode = /*  */ 0b000100;
+export const StrictLegacyMode = /*  */ 0b001000;
+export const StrictEffectsMode = /* */ 0b010000;
+
+export function createHostRootFiber(
+  tag: RootTag,
+  strictModeLevelOverride: null | number,
+): Fiber {
+  let mode;
+  if (tag === ConcurrentRoot) {
+    mode = ConcurrentMode;
+    if (strictModeLevelOverride !== null) {
+      if (strictModeLevelOverride >= 1) {
+        mode |= StrictLegacyMode;
+      }
+      if (enableStrictEffects) {
+        if (strictModeLevelOverride >= 2) {
+          mode |= StrictEffectsMode;
+        }
+      }
+    } else {
+      if (enableStrictEffects && createRootStrictEffectsByDefault) {
+        mode |= StrictLegacyMode | StrictEffectsMode;
+      } else {
+        mode |= StrictLegacyMode;
+      }
+    }
+  } else {
+    mode = NoMode;
+  }
+
+  if (enableProfilerTimer && isDevToolsPresent) {
+    // Always collect profile timings when DevTools are present.
+    // This enables DevTools to start capturing timing at any point–
+    // Without some nodes in the tree having empty base times.
+    mode |= ProfileMode;
+  }
+
+  return createFiber(HostRoot, null, null, mode);
+}
+
 
 // 代理dom事件
 let events = [
@@ -400,7 +468,7 @@ export const ContinuousEvent: EventPriority = 2;
 
 // lane
 
-// lane 应该是作为优先级标记或者是时间顺序标记的
+// lane 是作为优先级标记使用的
 
 export type Lanes = number;
 export type Lane = number;
@@ -457,20 +525,34 @@ export const IdleLane: Lanes = /*                       */ 0b0100000000000000000
 export const OffscreenLane: Lane = /*                   */ 0b1000000000000000000000000000000;
 
 
-// mode
+// fiber 的 mode
 
 export type TypeOfMode = number;
 
 export const NoMode = /*            */ 0b000000;
 // TODO: Remove ConcurrentMode by reading from the root tag instead
-export const ConcurrentMode = /*    */ 0b000001;
+export const ConcurrentMode = /*    */ 0b000001;  // Concurrent 并发，并行
 export const ProfileMode = /*       */ 0b000010;
 export const DebugTracingMode = /*  */ 0b000100;
 export const StrictLegacyMode = /*  */ 0b001000;
 export const StrictEffectsMode = /* */ 0b010000;
 
+// event
+// 事件优先级分为4等，直接使用了各个等级的lane
+// 猜测lane是一套优先级状态机模板，各个模块需要时直接引用
+
+export const DiscreteEventPriority: EventPriority = SyncLane;               // 0b0000000000000000000000000000001
+export const ContinuousEventPriority: EventPriority = InputContinuousLane;  // 0b0000000000000000000000000000100
+export const DefaultEventPriority: EventPriority = DefaultLane;             // 0b0000000000000000000000000010000
+export const IdleEventPriority: EventPriority = IdleLane;                   // 0b0100000000000000000000000000000
+
 
 //update
+
+export const UpdateState = 0;
+export const ReplaceState = 1;
+export const ForceUpdate = 2;
+export const CaptureUpdate = 3;
 
 export type Update<State> = {|
   // TODO: Temporary field. Will remove this by storing a map of
@@ -485,6 +567,7 @@ export type Update<State> = {|
   next: Update<State> | null,
 |};
 
+// 都是链表，指向链表尾
 export type SharedQueue<State> = {|
   pending: Update<State> | null,
   interleaved: Update<State> | null,
@@ -492,6 +575,3 @@ export type SharedQueue<State> = {|
 |};
 ```
 
-```javascript
-Interactions
-```
