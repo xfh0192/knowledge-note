@@ -58,3 +58,28 @@ var detectCycle = function(head) {
     }
     return null;
 };
+
+// ===
+// 复习
+
+var detectCycle = function(head) {
+    let slow = head
+    let fast = head
+    while (fast) {
+        slow = slow.next
+        if (fast.next) {
+            fast = fast.next.next
+        } else {
+            return null
+        }
+        if (slow === fast) {
+            let ptr = head
+            while (ptr !== slow) {
+                ptr = ptr.next
+                slow = slow.next
+            }
+            return ptr
+        }
+    }
+    return null
+};
