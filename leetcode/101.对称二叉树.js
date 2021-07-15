@@ -38,7 +38,8 @@ var isSymmetric = function(root) {
 
 function check(u, v) {
   let queue = []
-  queue.push(u).push(v)
+  queue.push(u)
+  queue.push(v)
   while (queue.length) {
     u = queue.shift()
     v = queue.shift()
