@@ -55,3 +55,32 @@ var postorderTraversal = function(root) {
 }
 
 // https://github.com/Alex660/Algorithms-and-data-structures/blob/master/demos/%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%89%E5%BA%8F%E9%81%8D%E5%8E%86.md
+
+// ===
+
+var postorderTraversal = function(root, res = []) {
+    if (root) {
+        postorderTraversal(root.left, res)
+        postorderTraversal(root.right, res)
+        res.push(root.val)
+    }
+    return res
+}
+
+// 后序遍历与中序遍历顺序相反
+var postorderTraversal = function(root) {
+    if (!root) return []
+    let res = []
+    let stack = []
+    let cur = root
+    while(cur || stack.length) {
+        while(cur) {
+            stack.push(cur)
+            res.unshift(cur.val)
+            cur = cur.right
+        }
+        cur = stack.pop()
+        cur = cur.left
+    }
+    return res
+}

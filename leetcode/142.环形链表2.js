@@ -83,3 +83,29 @@ var detectCycle = function(head) {
     }
     return null
 };
+
+// ===
+var detectCycle = function(head) {
+    let slow = head
+    let fast = head.next
+    while(fast) {
+        slow = slow.next
+        // 检查快指针，出现null表示快指针离开链表，无环
+        if (fast.next) {
+            fast = fast.next.next
+        } else {
+            return null
+        }
+        
+        // 发现环
+        if (slow === fast) {
+            let ptr = head
+            while(ptr !== slow) {
+                ptr = ptr.next
+                slow = slow.next
+            }
+            return ptr
+        }
+    }
+    return null
+}

@@ -35,3 +35,20 @@ var inorderTraversal1 = function(root) {
     }
     return result
 }
+
+// === 
+
+var inorderTraversal1 = function(root) {
+    let res = []
+    let stack = [root]
+    while(cur || stack.length) {
+        while(cur) {
+            stack.push(cur)
+            cur = cur.left
+        }
+        cur = stack.pop()
+        res.push(cur.val)
+        cur = cur.right
+    }
+    return res
+}
