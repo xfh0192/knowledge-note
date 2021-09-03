@@ -178,7 +178,7 @@ function FiberNode(
   this.key = key;
   this.elementType = null;
   this.type = null;
-  this.stateNode = null;  // 指向组件实例
+  this.stateNode = null;  // 指向组件实例（hostComponent时指向真实dom）
 
   // Fiber
   this.return = null; // parentFiber
@@ -188,7 +188,7 @@ function FiberNode(
 
   this.ref = null;
 
-  this.pendingProps = pendingProps;
+  this.pendingProps = pendingProps; // 含有children
   this.memoizedProps = null;
   this.updateQueue = null;
   this.memoizedState = null;
